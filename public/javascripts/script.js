@@ -18,8 +18,8 @@ $(function() {
     $('#search').on('submit', function (event) {
         event.preventDefault();
         
-        socket.emit('filter', {query: $('#q').val()});
+        $.get('/filter', 'q=' + $('#q').val(), function(data) {
+            $('#filter').html('Showing images for \'' + data.filter + '\'');
+        });
     });
-
-    
 })

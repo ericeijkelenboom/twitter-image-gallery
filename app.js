@@ -25,11 +25,14 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// Which hashtags to look for
-var hashtags = ['kids'];
-
 app.get('/', function(req, res){
   res.render('index', { data: "" });
+});
+
+app.get('/filter', function(req, res) {
+  var filter = req.query.q;
+  track(filter);
+  res.send({filter: filter});
 });
 
 var server = http.createServer(app).listen(app.get('port'), function(){
@@ -43,10 +46,6 @@ sockets.sockets.on('connection', function(socket) {
     socket.emit('data', {});
 });
 
-sockets.sockets.on('filter', function(filter) {     
-	console.log('FILTER RECEIVED ' + filter.query);
-});
-
 // Create twitter client
 var t = new twitter({
     consumer_key: 'l16oNBsc4vTv9wORAICk8A',
@@ -55,15 +54,23 @@ var t = new twitter({
     access_token_secret: 'F6oIfYF33ZsOIGp396gvOSj33kbfh6Lusyc8lLITPN3na'
 });
 
+var stream;
+
 // Start streaming
-t.stream('statuses/filter', { track: hashtags.join(' ') + ' photo' }, function(stream) {
-  stream.on('data', function(tweet) {
-	var media = tweet.entities["media"];
-	if(!media) return;
+var track = function(filter) {
+  console.log('FILTER RECEIVED ' + filter);
 
-	var media_url = media[0]["media_url"];
-	if(!media_url) return;
+  stream = t.stream('statuses/filter', { track: filter + ' photo' }, function(stream) {
+	  stream.on('data', function(tweet) {
+		if(tweet.disconnect) return;
 
-	sockets.sockets.emit('data', {text: tweet.text, url: media_url}); 
-  });
-});
+		var media = tweet.entities["media"];
+		if(!media) return;
+
+		var media_url = media[0]["media_url"];
+		if(!media_url) return;
+
+		sockets.sockets.emit('data', {text: tweet.text, url: media_url}); 
+	  });
+	});
+}
