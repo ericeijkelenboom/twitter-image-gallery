@@ -1,5 +1,5 @@
 $(function() {
-    var MAX_IMAGES = 200;
+    var MAX_IMAGES = 20;
     var socket = io.connect(window.location.hostname);
     
     // Setup image receive over socket
