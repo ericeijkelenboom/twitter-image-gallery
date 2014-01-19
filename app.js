@@ -15,7 +15,7 @@ nconf.argv()
 
 var app = express();
 
-app.set('port', nconf.get('http_port') || CONFIG.port);
+app.set('port', nconf.get('http_port') || process.env.PORT);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
