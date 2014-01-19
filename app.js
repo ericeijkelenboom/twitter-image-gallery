@@ -48,8 +48,11 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 var sockets = io.listen(server);
 
 sockets.sockets.on('connection', function(socket) { 
+    console.log('Initial socket data');
     socket.emit('data', {});
 });
+
+console.log('Creating twitter ' + nconf.get('twitter_consumer_key'));
 
 // Create twitter client
 var t = new twitter({
@@ -58,6 +61,8 @@ var t = new twitter({
     access_token_key: nconf.get('twitter_access_token_key'),
     access_token_secret: nconf.get('twitter_access_token_secret')
 });
+
+console.log('Twitter created');
 
 var stream;
 
