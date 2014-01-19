@@ -34,6 +34,14 @@ a {
 	width: 300px;
 }
 
+#search button {
+	border: 0 none;
+    font: bold 12px Arial,Helvetica,Sans-serif;
+    color: #777;
+    background: #444;
+    padding: 6px 5px 6px 5px;
+}
+
 #search label {
 	font: bold 12px Arial,Helvetica,Sans-serif;
     color: #777;

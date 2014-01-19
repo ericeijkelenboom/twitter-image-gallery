@@ -7,7 +7,9 @@ var twitter = require('ntwitter');
 var io = require('socket.io');
 var fs    = require('fs');
 
-// Setup configuration
+var filter; 
+
+// Setup nconf
 var nconf = require('nconf');
 nconf.argv()
       .env()
@@ -31,12 +33,14 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', function(req, res){
-  res.render('index', { data: "" });
+  res.render('index', { data: '', filter: filter || 'Type one or more keywords...'});
 });
 
 app.get('/filter', function(req, res) {
-  var filter = req.query.q;
-  track(filter);
+  filter = req.query.q;
+  
+  startStream();
+  
   res.send({filter: filter});
 });
 
@@ -48,11 +52,8 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 var sockets = io.listen(server);
 
 sockets.sockets.on('connection', function(socket) { 
-    console.log('Initial socket data');
     socket.emit('data', {});
 });
-
-console.log('Creating twitter ' + nconf.get('twitter_consumer_key'));
 
 // Create twitter client
 var t = new twitter({
@@ -62,14 +63,10 @@ var t = new twitter({
     access_token_secret: nconf.get('twitter_access_token_secret')
 });
 
-console.log('Twitter created');
-
 var stream;
 
 // Start streaming
-var track = function(filter) {
-  console.log('FILTER RECEIVED ' + filter);
-
+var startStream = function() {
   stream = t.stream('statuses/filter', { track: filter + ' photo' }, function(stream) {
 	  stream.on('data', function(tweet) {
 		if(tweet.disconnect) return;
