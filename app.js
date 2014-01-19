@@ -5,11 +5,17 @@ var http = require('http');
 var path = require('path');
 var twitter = require('ntwitter');
 var io = require('socket.io');
+var fs    = require('fs');
+
+// Setup configuration
+var nconf = require('nconf');
+nconf.argv()
+      .env()
+      .file({ file: 'config.json' });
 
 var app = express();
 
-// all environments
-app.set('port', process.env.PORT || 5000);
+app.set('port', nconf.get('http_port'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -20,7 +26,6 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
@@ -48,10 +53,10 @@ sockets.sockets.on('connection', function(socket) {
 
 // Create twitter client
 var t = new twitter({
-    consumer_key: 'l16oNBsc4vTv9wORAICk8A',
-    consumer_secret: 'Kt2lMGK5DPRGHc6v4mwOGEYrQMiY2x88IidBTgHKHk', 
-    access_token_key: '340823351-o20nfo4pHFRgWGW6mKo7dA2GnkJo8iDNfVYfKKOG',
-    access_token_secret: 'F6oIfYF33ZsOIGp396gvOSj33kbfh6Lusyc8lLITPN3na'
+    consumer_key: nconf.get('twitter_consumer_key'),
+    consumer_secret: nconf.get('twitter_consumer_secret'), 
+    access_token_key: nconf.get('twitter_access_token_key'),
+    access_token_secret: nconf.get('twitter_access_token_secret')
 });
 
 var stream;

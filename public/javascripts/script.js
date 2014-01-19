@@ -1,5 +1,5 @@
 $(function() {
-    var socket = io.connect('http://localhost:5000');
+    var socket = io.connect(window.location.hostname);
     
     socket.on('data', function(tweet) {        
         if(!tweet.url) return;
