@@ -33,7 +33,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', function(req, res){
-  res.render('index', { data: '', filter: filter || 'Type one or more keywords...'});
+  res.render('index', { data: '', filter: filter});
 });
 
 app.get('/filter', function(req, res) {

@@ -3,8 +3,15 @@ extends layout
 block content
   
   form(method="get" id="search")
-    input(id="q" name="q" type="text" size="150" placeholder=filter)/
+    input(id="q" name="q" type="text" size="150" placeholder="Type a keyword...")/
     button(type="submit") Search images
+    br/
     label(id="filter")
+      if filter
+        div.
+          Showing images for #{filter}
+      else 
+        div.
+          No active search
 
   div(id="container")

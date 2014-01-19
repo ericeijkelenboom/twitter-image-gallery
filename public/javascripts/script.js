@@ -32,8 +32,7 @@ $(function() {
         event.preventDefault();
         
         $.get('/filter', 'q=' + $('#q').val(), function(data) {
-            //$('#filter').html('Showing images for \'' + data.filter + '\'');
-            $('#q').val('').attr("placeholder", data.filter);
+            $('#filter > div').html("Showing images for " + data.filter);
         });
     });
 })
